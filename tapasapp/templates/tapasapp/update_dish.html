@@ -1,0 +1,33 @@
+{% extends 'tapasapp/base.html' %}
+
+{% block title %}Update Dish{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">Type in Dish Details:</div>
+    <div class="card-body">
+        <form method="POST" action="{% url 'update_dish' pk=pk dish_id=d.id %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="dname">Name:</label>
+                <input type="text" class="form-control" id="dname" name="dname" value="{{ d.name }}" disabled>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="ctime">Cook Time:</label>
+                        <input type="number" class="form-control w-50" id="ctime" name="ctime" value="{{ d.cook_time }}">
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="ptime">Prep Time:</label>
+                        <input type="number" class="form-control w-50" id="ptime" name="ptime" value="{{ d.prep_time }}">
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Update dish</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

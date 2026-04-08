@@ -1,0 +1,44 @@
+{% extends 'tapasapp/base.html' %}
+
+{% block title %}My Tapas Menu{% endblock %}
+
+{% block nav_buttons %}
+<div class="d-flex gap-2 position-absolute end-0 me-3">
+    <a href="{% url 'manage_account' pk=pk %}" class="btn btn-light btn-sm">Manage Account</a>
+    <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">Logout</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+    tbody tr:nth-child(odd) td  { background-color: #fffaf2; }
+    tbody tr:nth-child(even) td { background-color: #fff2dd; }
+</style>
+
+<div class="mb-3">
+    <a href="{% url 'add_menu' pk=pk %}" class="btn btn-dark">Add Dish</a>
+</div>
+
+<table class="table fs-5">
+    <thead>
+        <tr>
+            <th style="width: 55%;">Name</th>
+            <th style="width: 18%;">Cooking Time</th>
+            <th style="width: 18%;">Prep Time</th>
+            <th style="width: 9%;"></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for dish in dishes %}
+        <tr style="height: 60px;">
+            <td class="align-middle">{{ dish.name }}</td>
+            <td class="align-middle">{{ dish.cook_time }}</td>
+            <td class="align-middle">{{ dish.prep_time }}</td>
+            <td class="align-middle">
+                <a href="{% url 'view_detail' pk=pk dish_id=dish.id %}" class="btn btn-dark btn-sm">Details</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

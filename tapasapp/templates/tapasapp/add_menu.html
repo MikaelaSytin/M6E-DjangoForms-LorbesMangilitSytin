@@ -1,0 +1,33 @@
+{% extends 'tapasapp/base.html' %}
+
+{% block title %}Add Dish{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">Type in Dish Details:</div>
+    <div class="card-body">
+        <form method="POST" action="{% url 'add_menu' pk=pk %}">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+                <label for="dname">Name:</label>
+                <input type="text" class="form-control" id="dname" name="dname" required>
+            </div>
+            <div class="row mb-3">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="ctime">Cook Time:</label>
+                        <input type="number" class="form-control w-50" id="ctime" name="ctime" required>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="ptime">Prep Time:</label>
+                        <input type="number" class="form-control w-50" id="ptime" name="ptime" required>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-secondary mt-2">Add to dishes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
