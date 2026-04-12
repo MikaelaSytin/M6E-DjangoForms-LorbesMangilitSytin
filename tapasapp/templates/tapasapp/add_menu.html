@@ -16,7 +16,7 @@
                 <div class="col-6">
                     <div class="form-group">
                         <label for="ctime">Cook Time:</label>
-                        <input type="number" class="form-control w-50" id="ctime" name="ctime" required>
+                        <input type="number" class="form-control w-50" id="ctime" min=0 name="ctime" required>
                     </div>
                 </div>
                 <div class="col-6">
@@ -27,6 +27,7 @@
                 </div>
             </div>
             <button type="submit" class="btn btn-secondary mt-2">Add to dishes</button>
+            <a href="{% url 'better_menu' pk=pk %}" class="btn btn-dark mt-2">Back</a>
         </form>
     </div>
 </div>

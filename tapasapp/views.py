@@ -1,3 +1,18 @@
+# ======================
+#Mikaela Lauren Sytin 244321
+#Sebastian O. Mangilit 242880
+#Hans Gabrielle V. Lorbes 242699
+
+#We hereby attest to the truth of the following facts:
+#We have not discussed the HTML code in my program with anyone
+#other than my instructor or the teaching assistants assigned to this course.
+#We have not used HTML code obtained from another student, or
+#any other unauthorized source, whether modified or unmodified.
+#If any HTML code or documentation used in my program was
+#obtained from another source, it has been clearly noted with citations in the
+#comments of my program.
+# ======================
+
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Account, Dish
 
@@ -150,6 +165,12 @@ def change_password(request, pk):
         if user.password != current:
             return render(request, 'tapasapp/change_password.html', {
                 'error': 'Incorrect current password',
+                'pk': pk,
+            })
+
+        if current == new:
+            return render(request, 'tapasapp/change_password.html', {
+                'error': 'New password must be different from current password',
                 'pk': pk,
             })
 
