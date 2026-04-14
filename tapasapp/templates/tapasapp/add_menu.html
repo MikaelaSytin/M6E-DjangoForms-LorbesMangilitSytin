@@ -6,23 +6,30 @@
 <div class="card">
     <div class="card-header">Type in Dish Details:</div>
     <div class="card-body">
+
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
         <form method="POST" action="{% url 'add_menu' pk=pk %}">
             {% csrf_token %}
             <div class="form-group mb-3">
                 <label for="dname">Name:</label>
-                <input type="text" class="form-control" id="dname" name="dname" required>
+                <input type="text" class="form-control" id="dname" name="dname" value="{{ dname }}" required>
             </div>
             <div class="row mb-3">
                 <div class="col-6">
                     <div class="form-group">
                         <label for="ctime">Cook Time:</label>
-                        <input type="number" class="form-control w-50" id="ctime" min=0 name="ctime" required>
+                        <input type="number" class="form-control w-50" id="ctime" name="ctime" value="{{ ctime }}" required>
+
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="form-group">
                         <label for="ptime">Prep Time:</label>
-                        <input type="number" class="form-control w-50" id="ptime" name="ptime" required>
+                        <input type="number" class="form-control w-50" id="ptime" name="ptime" value="{{ ptime }}" required>
+
                     </div>
                 </div>
             </div>

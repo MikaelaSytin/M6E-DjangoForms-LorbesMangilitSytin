@@ -16,17 +16,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Account, Dish
 
+# ======================
+# GLOBAL VARIABLE
+# ======================
+logged_in_id = 0 #tracks the logged in user
+
 
 # ======================
 # LOGIN
 # ======================
 def login(request):
+    global logged_in_id
+
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
 
         try:
             user = Account.objects.get(username=username, password=password)
+            logged_in_id = user.id
             return redirect('better_menu', pk=user.id)
 
         except Account.DoesNotExist:
@@ -63,6 +71,8 @@ def signup(request):
 # LOGOUT
 # ======================
 def logout(request):
+    global logged_in_id
+    logged_in_id = 0
     return redirect('login')
 
 
@@ -70,6 +80,11 @@ def logout(request):
 # MENU LIST
 # ======================
 def better_menu(request, pk):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
     dishes = Dish.objects.all()
 
@@ -84,15 +99,40 @@ def better_menu(request, pk):
 # ADD DISH
 # ======================
 def add_menu(request, pk):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
 
     if request.method == "POST":
         name = request.POST.get('dname')
-        cook = request.POST.get('ctime')
-        prep = request.POST.get('ptime')
+        cook = int(request.POST.get('ctime'))
+        prep = int(request.POST.get('ptime'))
+
+        if cook < 0 and prep < 0:
+            return render(request, 'tapasapp/add_menu.html', {
+                'pk': pk,
+                'error': 'Cook time and prep time cannot be negative values',
+                'dname': name, 'ctime': cook, 'ptime': prep
+            })
+
+        if cook < 0:
+            return render(request, 'tapasapp/add_menu.html', {
+                'pk': pk,
+                'error': 'Cook time cannot be a negative value',
+                'dname': name, 'ctime': cook, 'ptime': prep
+            })
+
+        if prep < 0:
+            return render(request, 'tapasapp/add_menu.html', {
+                'pk': pk,
+                'error': 'Prep time cannot be a negative value',
+                'dname': name, 'ctime': cook, 'ptime': prep
+            })
 
         Dish.objects.create(name=name, cook_time=cook, prep_time=prep)
-
         return redirect('better_menu', pk=pk)
 
     return render(request, 'tapasapp/add_menu.html', {'pk': pk})
@@ -102,6 +142,11 @@ def add_menu(request, pk):
 # VIEW DETAILS
 # ======================
 def view_detail(request, pk, dish_id):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
     dish = get_object_or_404(Dish, id=dish_id)
 
@@ -115,12 +160,38 @@ def view_detail(request, pk, dish_id):
 # UPDATE DISH
 # ======================
 def update_dish(request, pk, dish_id):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
     dish = get_object_or_404(Dish, id=dish_id)
 
     if request.method == "POST":
-        dish.cook_time = request.POST.get('ctime')  # name is intentionally skipped
-        dish.prep_time = request.POST.get('ptime')
+        cook = int(request.POST.get('ctime'))
+        prep = int(request.POST.get('ptime'))
+
+        if cook < 0 and prep < 0:
+            return render(request, 'tapasapp/update_dish.html', {
+                'd': dish, 'pk': pk,
+                'error': 'Cook time and prep time cannot be negative values'
+            })
+
+        if cook < 0:
+            return render(request, 'tapasapp/update_dish.html', {
+                'd': dish, 'pk': pk,
+                'error': 'Cook time cannot be a negative value'
+            })
+
+        if prep < 0:
+            return render(request, 'tapasapp/update_dish.html', {
+                'd': dish, 'pk': pk,
+                'error': 'Prep time cannot be a negative value'
+            })
+
+        dish.cook_time = cook
+        dish.prep_time = prep
         dish.save()
         return redirect('view_detail', pk=pk, dish_id=dish_id)
 
@@ -134,6 +205,11 @@ def update_dish(request, pk, dish_id):
 # DELETE DISH
 # ======================
 def delete_dish(request, pk, dish_id):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     dish = get_object_or_404(Dish, id=dish_id)
     dish.delete()
     return redirect('better_menu', pk=pk)
@@ -143,6 +219,11 @@ def delete_dish(request, pk, dish_id):
 # MANAGE ACCOUNT
 # ======================
 def manage_account(request, pk):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
 
     return render(request, 'tapasapp/manage_account.html', {
@@ -155,6 +236,11 @@ def manage_account(request, pk):
 # CHANGE PASSWORD
 # ======================
 def change_password(request, pk):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
 
     if request.method == "POST":
@@ -192,6 +278,12 @@ def change_password(request, pk):
 # DELETE ACCOUNT
 # ======================
 def delete_account(request, pk):
+    global logged_in_id
+
+    if logged_in_id == 0 or logged_in_id != pk:
+        return redirect('login')
+
     user = get_object_or_404(Account, id=pk)
     user.delete()
+    logged_in_id = 0
     return redirect('login')
